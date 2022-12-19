@@ -2,17 +2,23 @@ version: 2
 
 jobs:
   build:
+    docker:
+      - image: ubuntu:latest
     steps:
       - checkout
       - run: echo "This is a build step"    # similar to "script" in GitLab
 
   test:
+    docker:
+      - image: ubuntu:latest
     steps:
       - checkout
       - run: echo "This is a test step"
 
   bundler-audit:
     machine: true
+    docker:
+      - image: docker:dind
     steps:
       - checkout
 
@@ -25,6 +31,8 @@ jobs:
           when: always
 
   integration:
+    docker:
+      - image: ubuntu:latest
     steps:
       - checkout
       - run:
@@ -33,6 +41,8 @@ jobs:
             exit 1
 
   prod:
+    docker:
+      - image: ubuntu:latest
     steps:
       - checkout
       - run: echo "This is a deploy step."
