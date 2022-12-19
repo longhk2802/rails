@@ -23,7 +23,7 @@ jobs:
       - checkout
 
       - run: 
-          command: docker run --rm -v $(pwd):/src -w /src hysnsec/bundle-audit check --format json --output bundle-audit-output.json
+          command: docker run --rm -v $(pwd):/src -v /var/run/docker.sock:/var/run/docker.sock -w /src hysnsec/bundle-audit check --format json --output bundle-audit-output.json
           when: always
 
       - store_artifacts:
