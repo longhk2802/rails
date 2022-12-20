@@ -11,7 +11,17 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - run: echo "This is a build step"
+      - name: Setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.6'
+
+      - run: |
+          pip3 install --upgrade virtualenv
+          virtualenv env
+          source env/bin/activate
+          pip install -r requirements.txt
+          python manage.py check
 
   test:
     runs-on: ubuntu-20.04
@@ -19,21 +29,38 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - run: echo "This is a test step"
+      - name: Setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.6'
 
-  bundler-audit:
+      - run: |
+          pip3 install --upgrade virtualenv
+          virtualenv env
+          source env/bin/activate
+          pip install -r requirements.txt
+          python manage.py test taskManager
+
+  oast:
     runs-on: ubuntu-20.04
     needs: test
     steps:
       - uses: actions/checkout@v2
 
-      - run: docker run --rm -v $(pwd):/src -w /src hysnsec/bundle-audit check --format json --output bundle-audit-output.json
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.6.6 # Not needed with a .ruby-version file
+          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+
+      - run: |
+          gem install chelsea
+          chelsea -f Gemfile.lock -t json | tail -n1 > chelsea-output.json      # tail -n1 to remove chelsea banner
         continue-on-error: true
 
       - uses: actions/upload-artifact@v2
         with:
-          name: bundler-audit
-          path: bundle-audit-output.json
+          name: Chelsea
+          path: chelsea-output.json
         if: always()                        # what is this for?
 
   integration:
