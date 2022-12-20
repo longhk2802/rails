@@ -24,7 +24,7 @@ jobs:
           command: |
             gem install chelsea
             chelsea -f Gemfile.lock -t json | tail -n1 > chelsea-output.json      # tail -n1 to remove chelsea banner
-          when: on_fail
+          when: always
 
       - store_artifacts:
           path: chelsea-output.json
@@ -40,6 +40,7 @@ jobs:
           command: |
             echo "This is an integration step"
             exit 1
+          when: on_fail
 
   prod:
     machine:
