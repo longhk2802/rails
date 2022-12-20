@@ -1,3 +1,5 @@
+version: 2.1
+
 jobs:
   build:
     machine:
@@ -7,6 +9,7 @@ jobs:
       - run: echo "This is a build step"    # similar to "script" in GitLab
 
   test:
+   
     steps:
       - checkout
       - run: echo "This is a test step"
@@ -28,6 +31,8 @@ jobs:
           when: always
 
   integration:
+    machine:
+      image: ubuntu-2004:current
     steps:
       - checkout
       - run:
@@ -36,6 +41,8 @@ jobs:
             exit 1
 
   prod:
+    machine:
+      image: ubuntu-2004:current
     steps:
       - checkout
       - run: echo "This is a deploy step."
